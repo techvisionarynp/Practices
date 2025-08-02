@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Easily create karaoke tracks with Marin AI's free online vocal remover. Powered by Accessible Resource, this tool removes vocals from any song (YouTube, SoundCloud, MP3, WAV) and separates up to 5 stems using advanced AI technology. Ideal for karaoke, remixing, and music production.">
+  <meta name="keywords" content="vocal remover, AI vocal remover, remove vocals from song, remove vocals from audio, acapella extractor, best vocal remover, karaoke track maker, music splitter tool, instrumental track maker, how to remove vocals from a song">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Marin AI Free Vocal Remover - Powered by Accessible Resource">
+  <meta property="og:description" content="Easily create karaoke tracks with Marin AI's free online vocal remover. Powered by Accessible Resource, this tool removes vocals from any song (YouTube, SoundCloud, MP3, WAV) and separates up to 5 stems using advanced AI technology. Ideal for karaoke, remixing, and music production.">
+
+
+
+  <script src="vr.js" type="text/javascript"></script>
+
+
+  <title>Marin AI Free Vocal Remover - Powered by Accessible Resource</title>
+</head>
+
+<body>
+
+  <main class="content">
+    <div class="title">
+      <h1>Marin AI Free Vocal Remover - Powered by Accessible Resource</h1>
+    </div>
+
+    <div class="description">
+      <p>This advanced tool, developed by Sujan Rai and the Accessible Resource team, leverages cutting-edge AI technology to deliver high-quality vocal removal and stem separation.</p>
+      <p>Effortlessly remove vocals and isolate up to 5 stems from any song using our state-of-the-art AI models, perfect for creating karaoke tracks, acapellas, or remixing.</p>
+      <p>Input a YouTube or SoundCloud link, or upload an MP3 or WAV file to begin processing your audio with precision and speed.</p>
+    </div>
+
+    <form id="uploadForm" onsubmit="handleSubmit(event)">
+      <div class="input-section">
+        <div class="form-group">
+          <label for="sourceType" class="form-label">Audio Source</label>
+          <select id="sourceType" onchange="handleSourceTypeChange()">
+            <option value="youtube">YouTube / SoundCloud</option>
+            <option value="file">File Upload</option>
+          </select>
+        </div>
+
+        <div id="linkInput" class="form-group">
+          <label for="link" class="form-label">Audio URL</label>
+          <input type="url" id="link" placeholder="Paste your link here" required>
+        </div>
+
+        <div id="fileInput" class="form-group">
+          <label for="file" class="form-label">Upload Audio File (MP3/WAV)</label>
+          <input type="file" id="file" accept=".mp3,.wav" required>
+        </div>
+
+        <div class="form-group">
+          <label for="stems" class="form-label">Number of Stems</label>
+          <select id="stems" required>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="chkMixer" class="form-label">Output Preference</label>
+          <select id="chkMixer" required>
+
+            <option value="2">Direct Download ZIP</option>
+          </select>
+        </div>
+
+        <button type="submit" class="process-button">PROCESS</button>
+        <div class="form-group" id="loadingDiv" style="display: none;">
+          <div class="loading-content">
+            <p class="loading-text">Please wait, our AI models are processing...</p>
+            <div id="queued"></div>
+
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="how-to-section">
+      <h2>How to Remove Vocals from a Song</h2>
+      <p>Follow these steps to create karaoke tracks or isolate vocals using Marin AI's vocal remover:</p>
+      <ol>
+        <li><strong>Select Audio Source</strong>: Choose whether to input a YouTube or SoundCloud link or upload an MP3/WAV file. Use the "Audio Source" dropdown to make your selection.</li>
+        <li><strong>Provide Audio Input</strong>: If selecting a link, paste the valid YouTube or SoundCloud URL in the "Audio URL" field. For file uploads, click the "Upload Audio File" field to select an MP3 or WAV file from your device.</li>
+        <li><strong>Choose Number of Stems</strong>: Select the number of stems (2, 4, or 5) you want to separate from the audio using the "Number of Stems" dropdown. Stems can include vocals, drums, bass, piano, and other instruments, depending on the selection.</li>
+        <li><strong>Select Output Preference</strong>: Choose between "Process with Mixer" to adjust the separated stems interactively or "Direct Download ZIP" to receive all stems as a downloadable ZIP file.</li>
+        <li><strong>Start Processing</strong>: Click the "PROCESS" button to initiate vocal removal. A loading screen will appear with the message "Please wait, our AI models are processing..." and a progress video. Processing typically takes about one minute.</li>
+        <li><strong>Download or Adjust Output</strong>: Once processing is complete, you will either be directed to the mixer interface (if selected) to fine-tune the stems or prompted to download a ZIP file containing the separated stems.</li>
+        <li><strong>Review and Use</strong>: Use the isolated stems for karaoke, remixing, or music production. Ensure the output meets your needs, and reprocess with different settings if necessary.</li>
+      </ol>
+      <p><strong>Note</strong>: For best results, use high-quality audio sources. Ensure you have the necessary permissions to process and use the audio for your intended purpose.</p>
+    </div>
+  </main>
+
+
+</body>
+</html>
