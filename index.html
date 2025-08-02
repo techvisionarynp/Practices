@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marin AI - Video Generator : generate professional videos from your imagination with native audios</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 95%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dddfe2;
+            font-size: 16px;
+            min-height: 100px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        label {
+            font-weight: 600;
+        }
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #dddfe2;
+            font-size: 16px;
+            flex-grow: 1;
+        }
+        button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0b5ed7;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        #statusText {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #606770;
+            min-height: 24px;
+        }
+        #videoContainer {
+            margin-top: 20px;
+            display: none;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #000;
+        }
+        .video-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .coming-soon {
+            margin-top: 30px;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Text to Video Generator</h1>
+
+        <div id="generation-form">
+            <label for="promptText">Describe your imagination in any language...</label>
+            <textarea id="promptText" placeholder="e.g., A stunning time-lapse of a flower blooming, with vibrant colors."></textarea>
+            <div class="controls">
+                <label for="videoStyle">Select a style:</label>
+                <select id="videoStyle">
+                    <option value="creative">Creative</option>
+                    <option value="natural" selected>Natural</option>
+                    <option value="professional">Professional</option>
+                </select>
+            </div>
+            <button id="generateBtn">Generate Video</button>
+        </div>
+
+        <p id="statusText"></p>
+
+        <div id="videoContainer">
+            <video id="generatedVideo" controls></video>
+            <div class="video-actions">
+                <button id="playPauseBtn">Play</button>
+                <button id="downloadBtn">Download Video</button>
+            </div>
+        </div>
+
+        <div id="resetContainer" style="display: none; margin-top: 20px;">
+             <button id="generateAnotherBtn">Generate Another Video</button>
+        </div>
+
+        <p class="coming-soon">Image to video generator coming soon.</p>
+    </div>
+
+    <audio id="generatingSound" src="sounds/generating.mp3" preload="auto"></audio>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // --- DOM ELEMENT SELECTION ---
+        const promptText = document.getElementById('promptText');
+        const videoStyle = document.getElementById('videoStyle');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusText = document.getElementById('statusText');
+        const videoContainer = document.getElementById('videoContainer');
+        const generatedVideo = document.getElementById('generatedVideo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetContainer = document.getElementById('resetContainer');
+        const generateAnotherBtn = document.getElementById('generateAnotherBtn');
+        const generationForm = document.getElementById('generation-form');
+        const generatingSound = document.getElementById('generatingSound');
+
+        // --- API & STATE VARIABLES ---
+        const API_KEY = "AIzaSyC2Fsjk3yCRA8hDVYgg5LlMn4sxwoJJaWU"; // Replace with your actual Google AI Studio API key
+        const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
+        let generatedFile; // To store the file object with URI
+        let isGenerating = false;
+
+        // --- CORE FUNCTIONS ---
+
+        /**
+         * Main function to generate video using fetch API
+         */
+        async function generateVideo() {
+            if (isGenerating) return;
+
+            const prompt = promptText.value.trim();
+            if (!prompt) {
+                showToast("Please describe your imagination first...", "error");
+                statusText.textContent = "Please describe your imagination first...";
+                return;
+            }
+             if (API_KEY === "YOUR_API_KEY") {
+                showToast("API Key not configured. Please edit this file.", "error");
+                statusText.textContent = "API Key not configured.";
+                return;
+            }
+
+            isGenerating = true;
+            setUIMode('loading');
+            playGeneratingSound(true);
+
+            const requestBody = {
+                model: "veo-3.0-generate-preview",
+                prompt: `${prompt}, in a ${videoStyle.value} style.`,
+                config: {
+                    negative_prompt: "blurry, distorted, low-quality, text, watermark",
+                },
+            };
+
+            try {
+                // 1. Initial POST request to start the generation
+                const initialResponse = await fetch(`${API_BASE_URL}/models/veo-3.0-generate-preview:generateVideos?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!initialResponse.ok) {
+                    const errorData = await initialResponse.json();
+                    throw new Error(errorData.error.message || 'Failed to start video generation.');
+                }
+
+                const operation = await initialResponse.json();
+                const operationName = operation.name;
+
+                showToast("Request sent! The AI is now creating your video.", "info");
+
+                // 2. Poll the operation status endpoint
+                const finalResult = await pollOperation(operationName);
+
+                // 3. Process successful response
+                generatedFile = finalResult.response.generatedVideos[0].file;
+                setUIMode('success');
+                generatedVideo.src = generatedFile.uri; // Use the URI directly
+
+            } catch (error) {
+                console.error("Video generation failed:", error);
+                showToast(error.message || "An error occurred during video generation.", "error");
+                setUIMode('reset');
+                statusText.textContent = `Error: ${error.message}`;
+            } finally {
+                playGeneratingSound(false);
+                isGenerating = false;
+            }
+        }
+
+        /**
+         * Polls the operation until it's done.
+         * @param {string} operationName - The name of the operation to poll.
+         * @returns {Promise<object>} The final operation result.
+         */
+        function pollOperation(operationName) {
+            return new Promise((resolve, reject) => {
+                const intervalId = setInterval(async () => {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/${operationName}?key=${API_KEY}`);
+                        if (!response.ok) {
+                             const errorData = await response.json();
+                             throw new Error(errorData.error.message || 'Polling failed.');
+                        }
+                        const result = await response.json();
+                        if (result.done) {
+                            clearInterval(intervalId);
+                            if (result.error) {
+                                reject(new Error(result.error.message));
+                            } else {
+                                resolve(result);
+                            }
+                        }
+                        // If not done, the interval continues
+                    } catch (error) {
+                        clearInterval(intervalId);
+                        reject(error);
+                    }
+                }, 5000); // Poll every 5 seconds
+            });
+        }
+
+        /**
+         * Toggles video playback and updates the button text.
+         */
+        function playPauseVideo() {
+            if (!generatedVideo) return;
+            if (generatedVideo.paused || generatedVideo.ended) {
+                generatedVideo.play().catch(error => {
+                    console.error("Playback failed:", error);
+                    showToast("Failed to play video.", "error");
+                });
+            } else {
+                generatedVideo.pause();
+            }
+        }
+        
+        /**
+         * Downloads the generated video file by fetching its URI.
+         */
+        async function downloadVideo() {
+            if (!generatedFile || !generatedFile.uri) {
+                showToast("No video file available to download.", "error");
+                return;
+            }
+            showToast("Preparing download...", "info");
+            try {
+                // Fetch the video data from its public URI
+                const response = await fetch(generatedFile.uri);
+                if (!response.ok) throw new Error('Could not fetch video file.');
+                const blob = await response.blob();
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = generateFilename();
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                a.remove();
+                showToast("Download started!", "success");
+
+            } catch (error) {
+                console.error("Download failed:", error);
+                showToast("Failed to download the video.", "error");
+            }
+        }
+        
+        /**
+         * Resets the entire UI to its initial state.
+         */
+        function resetUI() {
+            promptText.value = '';
+            videoStyle.value = 'natural';
+            generatedVideo.src = '';
+            generatedFile = null;
+            setUIMode('initial');
+            playGeneratingSound(false);
+            isGenerating = false;
+        }
+
+        // --- UI & SOUND HELPER FUNCTIONS ---
+        
+        function playGeneratingSound(play) {
+             try {
+                if (play) {
+                    generatingSound.currentTime = 0;
+                    generatingSound.play();
+                } else {
+                    generatingSound.pause();
+                    generatingSound.currentTime = 0;
+                }
+            } catch (error) {
+                console.warn("Audio playback issue:", error);
+            }
+        }
+
+        function setUIMode(mode) {
+            // Default states
+            generateBtn.disabled = false;
+            generationForm.style.display = 'block';
+            videoContainer.style.display = 'none';
+            resetContainer.style.display = 'none';
+            statusText.textContent = '';
+
+            if (mode === 'loading') {
+                generateBtn.disabled = true;
+                statusText.textContent = "AI is creating your video. It can take a few minutes...";
+            } else if (mode === 'success') {
+                statusText.textContent = "AI has generated your video!";
+                generationForm.style.display = 'none';
+                videoContainer.style.display = 'block';
+                resetContainer.style.display = 'block';
+            } else if (mode === 'reset') {
+                generateBtn.disabled = false;
+            }
+        }
+
+        function showToast(text, type = 'info') {
+            const backgroundColor = {
+                success: "linear-gradient(to right, #00b09b, #96c93d)",
+                error: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                info: "linear-gradient(to right, #0d6efd, #0b5ed7)"
+            }[type] || "linear-gradient(to right, #0d6efd, #0b5ed7)";
+
+            Toastify({
+                text: text, duration: 5000, close: true, gravity: "top", position: "right",
+                style: { background: backgroundColor }
+            }).showToast();
+        }
+
+        function generateFilename() {
+            const now = new Date();
+            const date = now.toISOString().split('T')[0];
+            const time = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+            return `marin_AI_by_Sujan-video_generator_${date}_${time}.mp4`;
+        }
+
+        // --- EVENT LISTENERS ---
+        generateBtn.addEventListener('click', generateVideo);
+        playPauseBtn.addEventListener('click', playPauseVideo);
+        downloadBtn.addEventListener('click', downloadVideo);
+        generateAnotherBtn.addEventListener('click', resetUI);
+        
+        generatedVideo.addEventListener('pause', () => { playPauseBtn.textContent = 'Play'; });
+        generatedVideo.addEventListener('play', () => { playPauseBtn.textContent = 'Pause'; });
+
+        // Initialize the UI on page load
+        resetUI();
+    </script>
+</body>
+</html>
