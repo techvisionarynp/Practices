@@ -3,219 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free YouTube to MP3 Downloader</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ToolNova Blog</title>
     <style>
         body {
-            background: linear-gradient(to bottom right, #e0e7ff, #f3e8ff);
-            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        /* Header Styling */
+        header {
+            background: linear-gradient(135deg, #2b6cb0, #1a4971);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: linear-gradient(to right, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            margin: 0.75rem 0 0;
+            font-size: 1.25rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1280px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Google Translate Styling */
+        .translate-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Inter', sans-serif;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
         }
-        .container {
-            max-width: 32rem;
+
+        #google_translate_element select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background-color: #ffffff;
+            font-size: 1rem;
+            color: #2d3748;
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #google_translate_element select:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+        }
+
+        /* Iframe Styling */
+        .blog-iframe {
             width: 100%;
-            margin: 1rem;
+            height: 80vh;
+            border: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            transition: box-shadow 0.3s ease;
         }
-        .input-container, .loading-container, .error-container, .success-container {
-            transition: all 0.3s ease-in-out;
+
+        .blog-iframe:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Export Button Styling */
+        .export-btn {
+            display: block;
+            margin: 1.5rem auto;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #2b6cb0, #1a4971);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, #1a4971, #2b6cb0);
+            transform: translateY(-2px);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1.1rem;
+            }
+
+            .blog-iframe {
+                height: 70vh;
+            }
+
+            .export-btn {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            header p {
+                font-size: 0.95rem;
+            }
+
+            .translate-container {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container bg-white rounded-2xl shadow-xl p-8">
-        <!-- Input Container -->
-        <div id="inputContainer" class="input-container">
-
-<p>hi, this is a free and fast YouTube to mp3 downloader, developed by - Sujan Rai and SM ripon at accessible resource.</p>
-<p>paste the YouTube link below and download as mp3 audio.</p>
-            <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">YouTube to MP3 Downloader</h1>
-            <form id="downloadForm" onsubmit="handleSubmit(event)">
-                <label for="link" class="block text-sm font-medium text-gray-700 mb-2">
-                    Paste the YouTube link here:
-                </label>
-                <input
-                    type="url"
-                    id="link"
-                    name="link"
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    required
-                >
-                <button
-                    type="submit"
-                    id="downloadButton"
-                    class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                    Download MP3
-                </button>
-            </form>
+    <header>
+        <h1>ToolNova Blog</h1>
+        <p>Explore the latest insights, tips, and updates from the world of technology!</p>
+    </header>
+    <main>
+        <div class="translate-container">
+            <div id="google_translate_element"></div>
         </div>
+        <iframe class="blog-iframe" id="blogFrame" src="https://toolnovablog.blogspot.com" title="ToolNova Blog"></iframe>
+        <button class="export-btn" onclick="exportToPDF()">Export to PDF</button>
+    </main>
 
-        <!-- Loading Container -->
-        <div id="loadingContainer" class="loading-container hidden text-center">
-            <p class="text-lg font-medium text-gray-700">Processing your YouTube video, please wait...</p>
-            <p id="queuedMessage" class="text-sm text-gray-500 mt-2"></p>
-        </div>
-
-        <!-- Error Container -->
-        <div id="errorContainer" class="error-container hidden text-center">
-            <h2 class="text-xl font-semibold text-red-600">Conversion Error</h2>
-            <p class="text-gray-600 mt-2">Sorry, we've got a problem in processing your video. Please try again later.</p>
-            <button
-                id="retryButton"
-                class="mt-4 bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-colors"
-                onclick="resetForm()"
-            >
-                Retry
-            </button>
-        </div>
-
-        <!-- Success Container -->
-        <div id="successContainer" class="success-container hidden text-center">
-            <h2 class="text-xl font-semibold text-green-600">Conversion Successful</h2>
-            <p class="text-gray-600 mt-2">Hey, your video is successfully converted to MP3. Would you like to download it or convert another?</p>
-            <div class="flex gap-4 mt-4 justify-center">
-                <button
-                    id="downloadMp3Button"
-                    class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                    Download
-                </button>
-                <button
-                    id="downloadAnotherButton"
-                    class="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-colors"
-                    onclick="resetForm()"
-                >
-                    Convert Another
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script>
-        async function handleSubmit(event) {
-            event.preventDefault();
+        // Initialize Google Translate
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
 
-            // UI Updates
-            const downloadButton = document.getElementById('downloadButton');
-            const inputContainer = document.getElementById('inputContainer');
-            const loadingContainer = document.getElementById('loadingContainer');
-            const errorContainer = document.getElementById('errorContainer');
-            const successContainer = document.getElementById('successContainer');
-            const queuedMessage = document.getElementById('queuedMessage');
-            const downloadMp3Button = document.getElementById('downloadMp3Button');
-
-            downloadButton.textContent = 'Processing...';
-            downloadButton.disabled = true;
-            inputContainer.classList.add('hidden');
-            loadingContainer.classList.remove('hidden');
-
-            let url = document.getElementById('link').value.trim();
-
-            // Normalize YouTube URL
-            const shortUrlMatch = url.match(/^https:\/\/youtu\.be\/([\w-]+)(?:\?.*)?$/);
-            if (shortUrlMatch) {
-                url = `https://www.youtube.com/watch?v=${shortUrlMatch[1]}`;
-            }
-            const standardUrlMatch = url.match(/^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([\w-]+)/);
-            if (standardUrlMatch) {
-                url = `https://www.youtube.com/watch?v=${standardUrlMatch[1]}`;
-            }
-            const embedUrlMatch = url.match(/^https:\/\/(?:www\.|m\.)?youtube\.com\/embed\/([\w-]+)/);
-            if (embedUrlMatch) {
-                url = `https://www.youtube.com/watch?v=${embedUrlMatch[1]}`;
-            }
-
-            const formData = new FormData();
-            formData.append('client-type', 'web');
-            formData.append('client-name', 'Mazmazika');
-            formData.append('url', url);
-
-            const endpoint = 'https://www.mazmazika.com/dl2025.php';
-            const maxRetries = 10; // Limit retries to avoid infinite loop
-            let retries = 0;
-
+        // Function to modify iframe content
+        async function modifyIframeContent() {
+            const iframe = document.getElementById('blogFrame');
             try {
-                let response = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData
+                // Access iframe document
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Update iframe title
+                iframeDoc.title = 'ToolNova Blog';
+                const titleElement = iframeDoc.querySelector('title');
+                if (titleElement) {
+                    titleElement.textContent = 'ToolNova Blog';
+                }
+
+                // Hide elements with class containing "blogger"
+                const bloggerElements = iframeDoc.querySelectorAll('[class*="blogger"]');
+                bloggerElements.forEach(el => {
+                    el.style.display = 'none';
                 });
 
-                if (!response.ok) throw new Error('Failed to process the request.');
+                // Hide elements with id containing "image-attribution"
+                const imageAttributionElements = iframeDoc.querySelectorAll('[id*="image-attribution"]');
+                imageAttributionElements.forEach(el => {
+                    el.style.display = 'none';
+                });
 
-                let result = await response.json();
-
-                // Handle queue polling
-                while (result.filename === 'queued' && retries < maxRetries) {
-                    queuedMessage.textContent = 'There are users ahead in the queue. Please wait for your turn.';
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-                    queuedMessage.textContent = '';
-                    response = await fetch(endpoint, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    result = await response.json();
-                    retries++;
-                }
-
-                if (retries >= maxRetries) {
-                    throw new Error('Maximum retry attempts reached. Please try again later.');
-                }
-
-                if (result.filename !== 'error') {
-                    // Process successful response
-                    const audioData = atob(result.data);
-                    const byteArray = new Uint8Array(audioData.length);
-                    for (let i = 0; i < audioData.length; i++) {
-                        byteArray[i] = audioData.charCodeAt(i);
+                // Inject CSS to ensure consistent hiding
+                const style = iframeDoc.createElement('style');
+                style.textContent = `
+                    [class*="blogger"], [id*="image-attribution"] {
+                        display: none !important;
                     }
-                    const blob = new Blob([byteArray], { type: 'audio/mpeg' });
-                    const downloadUrl = window.URL.createObjectURL(blob);
-
-                    // Set up download button
-                    downloadMp3Button.onclick = () => {
-                        const link = document.createElement('a');
-                        link.href = downloadUrl;
-                        link.download = result.filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        link.remove();
-                        window.URL.revokeObjectURL(downloadUrl);
-                    };
-
-                    // Show success state
-                    loadingContainer.classList.add('hidden');
-                    successContainer.classList.remove('hidden');
-                } else {
-                    throw new Error(result.data || 'Unknown error occurred.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                loadingContainer.classList.add('hidden');
-                errorContainer.classList.remove('hidden');
-            } finally {
-                downloadButton.textContent = 'Download MP3';
-                downloadButton.disabled = false;
+                `;
+                iframeDoc.head.appendChild(style);
+            } catch (e) {
+                console.warn('Cannot modify iframe content due to CORS restrictions:', e);
+                iframe.setAttribute('title', 'ToolNova Blog');
             }
         }
 
-        function resetForm() {
-            // Reset all states
-            document.getElementById('downloadForm').reset();
-            document.getElementById('inputContainer').classList.remove('hidden');
-            document.getElementById('loadingContainer').classList.add('hidden');
-            document.getElementById('errorContainer').classList.add('hidden');
-            document.getElementById('successContainer').classList.add('hidden');
-            document.getElementById('queuedMessage').textContent = '';
+        // Export to PDF
+        async function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: 'a4'
+            });
+
+            // Capture header
+            const header = document.querySelector('header');
+            const headerCanvas = await html2canvas(header, { scale: 2 });
+            const headerImgData = headerCanvas.toDataURL('image/png');
+            const headerImgProps = doc.getImageProperties(headerImgData);
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const headerHeight = (headerImgProps.height * pageWidth) / headerImgProps.width;
+            doc.addImage(headerImgData, 'PNG', 0, 10, pageWidth, headerHeight);
+
+            // Capture iframe content
+            const iframe = document.getElementById('blogFrame');
+            try {
+                const iframeCanvas = await html2canvas(iframe, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+                const iframeImgData = iframeCanvas.toDataURL('image/png');
+                const iframeImgProps = doc.getImageProperties(iframeImgData);
+                const iframeHeight = (iframeImgProps.height * pageWidth) / iframeImgProps.width;
+                doc.addPage();
+                doc.addImage(iframeImgData, 'PNG', 0, 10, pageWidth, iframeHeight);
+            } catch (e) {
+                console.warn('Error capturing iframe content:', e);
+                doc.addPage();
+                doc.text('Unable to capture blog content due to CORS restrictions.', 20, 20);
+            }
+
+            // Save the PDF
+            doc.save('ToolNova_Blog.pdf');
         }
 
-        // Initialize form visibility
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('inputContainer').classList.remove('hidden');
+        // Initialize iframe content modification
+        document.getElementById('blogFrame').addEventListener('load', modifyIframeContent);
+
+        // Handle iframe navigation
+        window.addEventListener('message', (event) => {
+            if (event.origin === 'https://toolnovablog.blogspot.com') {
+                modifyIframeContent();
+            }
         });
     </script>
 </body>
